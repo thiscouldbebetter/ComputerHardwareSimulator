@@ -34,4 +34,28 @@ class Wire
 			this.signalLevel = this.signalLevelNext;
 		}
 	}
+
+	// Serialization.
+
+	static setPrototypesOnObject(objectDeserialized)
+	{
+		Object.setPrototypeOf(objectDeserialized, Wire.prototype);
+		Object.setPrototypeOf(objectDeserialized.pos, Coords.prototype);
+		objectDeserialized.connections.forEach
+		(
+			x => Connection.setPrototypesOnObject(x)
+		);
+	}
+
+	toObjectSerializable()
+	{
+		var thisAsObjectSerializable =
+		{
+			name: this.name,
+			pos: this.pos,
+			connections: this.connections
+		};
+
+		return thisAsObjectSerializable;
+	}
 }

@@ -144,8 +144,9 @@ class DisplayHelper
 		canvas.width = this.viewSizeInPixels.x;
 		canvas.height = this.viewSizeInPixels.y;
 
-		var divMain = document.getElementById("divMain");
-		divMain.appendChild(canvas);
+		var divOutput = document.getElementById("divOutput");
+		divOutput.innerHTML = "";
+		divOutput.appendChild(canvas);
 
 		this.graphics = canvas.getContext("2d");
 	}

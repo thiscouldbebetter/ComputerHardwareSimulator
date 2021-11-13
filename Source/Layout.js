@@ -6,9 +6,6 @@ class Layout
 		this.name = name;
 		this.components = components;
 		this.wires = wires;
-
-		this.componentsByName = new Map(this.components.map(x => [x.name, x]));
-		this.wiresByName = new Map(this.wires.map(x => [x.name, x]));
 	}
 
 	initialize()
@@ -49,5 +46,66 @@ class Layout
 			var wire = this.wires[i];
 			wire.update();
 		}
+	}
+
+	// Lookups.
+
+	componentByName(componentName)
+	{
+		return this.componentsByName().get(componentName);
+	}
+
+	componentsByName()
+	{
+		if (this._componentsByName == null)
+		{
+			this._componentsByName =
+				new Map(this.components.map(x => [x.name, x]));
+		}
+		return this._componentsByName;
+	}
+
+	wireByName(wireName)
+	{
+		return this.wiresByName().get(wireName);
+	}
+
+	wiresByName()
+	{
+		if (this._wiresByName == null)
+		{
+			this._wiresByName =
+				new Map(this.wires.map(x => [x.name, x]));
+		}
+		return this._wiresByName;
+	}
+
+	// Serialization.
+
+	static setPrototypesOnObject(objectDeserialized)
+	{
+		Object.setPrototypeOf(objectDeserialized, Layout.prototype);
+
+		objectDeserialized.components.forEach
+		(
+			x => Component.setPrototypesOnObject(x)
+		);
+
+		objectDeserialized.wires.forEach
+		(
+			x => Wire.setPrototypesOnObject(x)
+		);
+	}
+
+	toObjectSerializable()
+	{
+		var thisAsObjectSerializable =
+		{
+			name: this.name,
+			components: this.components.map(x => x.toObjectSerializable()),
+			wires: this.wires.map(x => x.toObjectSerializable())
+		};
+
+		return thisAsObjectSerializable;
 	}
 }

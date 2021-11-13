@@ -1,7 +1,7 @@
 
 class DemoData
 {
-	static universe()
+	universe()
 	{
 		var componentDefns = ComponentDefn.Instances();
 

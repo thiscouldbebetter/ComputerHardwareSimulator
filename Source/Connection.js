@@ -9,14 +9,14 @@ class Connection
 
 	component()
 	{
-		return Globals.Instance.universe.layout.componentsByName.get(this.componentName);
+		return Globals.Instance.universe.layout.componentByName(this.componentName);
 	}
 
 	pos()
 	{
 		var component = this.component();
 		var componentDefn = component.defn();
-		var leadDefn = componentDefn.leadDefnsByName.get(this.leadName);
+		var leadDefn = componentDefn.leadDefnByName(this.leadName);
 		var leadOffset = leadDefn.posWithinComponent;
 		var leadSizeHalf = ComponentLeadDefn.SizeStandardHalf();
 		var returnValue = component.pos.clone().add
@@ -31,6 +31,13 @@ class Connection
 
 	wire()
 	{
-		return Globals.Instance.universe.layout.wiresByName.get(this.wireName);
+		return Globals.Instance.universe.layout.wireByName(this.wireName);
+	}
+
+	// Serialization.
+
+	static setPrototypesOnObject(objectDeserialized)
+	{
+		Object.setPrototypeOf(objectDeserialized, Connection.prototype);
 	}
 }

@@ -1,7 +1,71 @@
 <html>
 <body>
 
-<div id="divMain" />
+<div id="divUI">
+
+	<h3>Computer Hardware Simulator</h3>
+
+	<p>
+		Enter a layout specification in JSON format, then click the Render button
+		to see a visual representation.
+	</p>
+
+	<label>Layout Specification as JSON:</label>
+	<button onclick="buttonLoadDemo_Clicked();">Load Demo</button>
+	<br />
+
+	<textarea id="textareaSpecification" cols="80" rows="20">
+	</textarea>
+	<br />
+
+	<label>Layout Visual:</label>
+	<button onclick="buttonRender_Clicked();">Render</button>
+	<br />
+	<div id="divOutput" />
+
+</div>
+
+<script type="text/javascript">
+
+function buttonLoadDemo_Clicked()
+{
+	var d = document;
+	var textareaSpecification =
+		d.getElementById("textareaSpecification");
+
+	var demoData = new DemoData();
+	var universe = demoData.universe();
+	var universeAsObjectSerializable =
+		universe.toObjectSerializable();
+	var universeAsJson = JSON.stringify
+	(
+		universeAsObjectSerializable, null, 4
+	);
+
+	textareaSpecification.value = universeAsJson;
+}
+
+function buttonRender_Clicked()
+{
+	var d = document;
+	var textareaSpecification =
+		d.getElementById("textareaSpecification");
+
+	var universeAsJson = textareaSpecification.value;
+	var universeAsObject = JSON.parse(universeAsJson);
+	var universeDeserialized =
+		Universe.setPrototypesOnObject(universeAsObject);
+
+	Globals.Instance.initialize
+	(
+		new Coords(400, 200), // displaySize
+		universeDeserialized
+	);
+
+	//universeDeserialized.update();
+}
+
+</script>
 
 <script type="text/javascript" src="Component.js"></script>
 <script type="text/javascript" src="ComponentDefn.js"></script>
@@ -16,12 +80,6 @@
 <script type="text/javascript" src="Layout.js"></script>
 <script type="text/javascript" src="Universe.js"></script>
 <script type="text/javascript" src="Wire.js"></script>
-
-<script type="text/javascript">
-
-new ComputerHardwareSimulator().run();
-
-</script>
 
 </body>
 </html>

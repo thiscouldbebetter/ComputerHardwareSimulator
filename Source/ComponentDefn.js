@@ -8,9 +8,32 @@ class ComponentDefn
 		this.leadDefns = leadDefns;
 		this.draw = draw;
 		this.update = update;
+	}
 
-		this.sizeHalf = this.size.clone().divideScalar(2);
-		this.leadDefnsByName = new Map(this.leadDefns.map(x => [x.name, x]));
+	// Helpers.
+
+	sizeHalf()
+	{
+		if (this._sizeHalf == null)
+		{
+			this._sizeHalf = this.size.clone().divideScalar(2);
+		}
+		return this._sizeHalf;
+	}
+
+	leadDefnByName(leadDefnName)
+	{
+		return this.leadDefnsByName().get(leadDefnName);
+	}
+
+	leadDefnsByName()
+	{
+		if (this._leadDefnsByName == null)
+		{
+			this._leadDefnsByName =
+				new Map(this.leadDefns.map(x => [x.name, x]));
+		}
+		return this._leadDefnsByName;
 	}
 
 	// instances
@@ -27,6 +50,37 @@ class ComponentDefn
 	static byName(componentDefnName)
 	{
 		return ComponentDefn.Instances().byName(componentDefnName);
+	}
+
+	// Serialization.
+
+	static setPrototypesOnObject(objectDeserialized)
+	{
+		Object.setPrototypeOf(objectDeserialized, ComponentDefn.prototype);
+		Object.setPrototypeOf(objectDeserialized.size, Coords.prototype);
+		objectDeserialized.leadDefns.forEach
+		(
+			x => ComponentLeadDefn.setPrototypesOnObject(x)
+		);
+		if (objectDeserialized.draw != null)
+		{
+			objectDeserialized.draw = eval(objectDeserialized.draw);
+		}
+		objectDeserialized.update = eval(objectDeserialized.update);
+	}
+
+	toObjectSerializable()
+	{
+		var thisAsObjectSerializable =
+		{
+			name: this.name,
+			size: this.size,
+			leadDefns: this.leadDefns,
+			draw: this.draw == null ? null : this.draw.toString(),
+			update: this.update.toString()
+		};
+
+		return thisAsObjectSerializable;
 	}
 }
 
@@ -171,7 +225,7 @@ class ComponentDefn_Instances
 				{
 					var drawPos = component.pos.clone().add
 					(
-						component.defn().sizeHalf
+						component.defn().sizeHalf()
 					);
 					var wire =
 						component.connectionsByLeadName.get("In").wire();
